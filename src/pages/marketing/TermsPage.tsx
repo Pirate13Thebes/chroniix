@@ -33,8 +33,8 @@ export function TermsPage() {
             </h2>
             <p>
               {isFr
-                ? "Chronix est une plateforme en ligne de gestion des présences et du temps de travail, accessible à l'adresse chronix.com. Il n'y a pas d'application à télécharger ; elle s'exécute directement dans votre navigateur internet."
-                : "Chronix is a web-based workforce attendance and management platform, accessed at chronix.com. There is no downloadable app; it runs in your browser."}
+                ? "Chronix est une plateforme en ligne de gestion des présences et du temps de travail, accessible à l'adresse chronx.netlify.app. Il n'y a pas d'application à télécharger ; elle s'exécute directement dans votre navigateur internet."
+                : "Chronix is a web-based workforce attendance and management platform, accessed at chronx.netlify.app. There is no downloadable app; it runs in your browser."}
             </p>
           </section>
 

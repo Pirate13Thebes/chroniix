@@ -1,4 +1,4 @@
-// Screen A — Marketing site (chronix.com)
+// Screen A — Marketing site (chronx.netlify.app)
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Navbar } from '../../components/marketing/Navbar';

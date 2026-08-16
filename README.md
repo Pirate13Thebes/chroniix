@@ -4,7 +4,7 @@ Chronix is a workforce attendance and management web app built for Mauritian bus
 
 No business owner in Mauritius should spend late nights auditing paper attendance sheets to calculate salaries.
 
-Chronix is accessed entirely through the browser at **chronix.com** — there is no downloadable mobile app, so the web app is built mobile-first and must work flawlessly in mobile browsers and iOS webviews.
+Chronix is accessed entirely through the browser at **chronx.netlify.app** — there is no downloadable mobile app, so the web app is built mobile-first and must work flawlessly in mobile browsers and iOS webviews.
 
 ## Architecture
 
@@ -26,7 +26,7 @@ Everything an employee does appears instantly on the admin side, and every admin
 
 | Area | Admin side | Employee side |
 |---|---|---|
-| Landing | chronix.com marketing page (shared) | same |
+| Landing | chronx.netlify.app marketing page (shared) | same |
 | Auth | Login with Business/Employee toggle (shared) | same |
 | Home | Dashboard (team overview) | Home (own status + clock in/out) |
 | Attendance | Attendance (full team table) | — (own record lives in History) |

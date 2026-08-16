@@ -4,7 +4,7 @@ Every screen, derived from the approved UI designs and the "How the App Works" d
 
 ---
 
-## A. Marketing site (chronix.com)
+## A. Marketing site (chronx.netlify.app)
 
 **Purpose:** explain Chronix and drive Sign Up. All CTAs (Get Started Now, Login, Sign Up) lead to the SAME login screen.
 

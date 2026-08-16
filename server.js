@@ -449,7 +449,7 @@ app.post('/api/auth/send-email', async (req, res) => {
 
   try {
     const transporter = await getTransporter();
-    const fromAddress = process.env.EMAIL_USER || 'no-reply@chronix.com';
+    const fromAddress = process.env.EMAIL_USER || 'no-reply@chronx.netlify.app';
     const info = await transporter.sendMail({
       from: `"Chronix Notifications" <${fromAddress}>`,
       to,
