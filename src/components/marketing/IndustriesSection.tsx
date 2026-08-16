@@ -337,25 +337,63 @@ export function IndustriesSection() {
   const [selectedIndustry, setSelectedIndustry] = useState<string | null>(null);
   const [isHovered, setIsHovered] = useState(false);
 
-  const scrollTrack = (direction: -1 | 1) => {
-    trackRef.current?.scrollBy({ left: direction * 320, behavior: 'smooth' });
+  // Helper to dynamically get the card step (width + gap) from DOM
+  const getCardStep = (): number => {
+    if (trackRef.current) {
+      const track = trackRef.current;
+      const card = track.firstElementChild as HTMLElement;
+      if (card) {
+        const cardWidth = card.getBoundingClientRect().width;
+        const style = window.getComputedStyle(track);
+        const gap = parseFloat(style.columnGap || style.gap) || 20;
+        return cardWidth + gap;
+      }
+    }
+    return 300; // fallback
   };
 
-  // Carousel smooth auto-scrolling effect
+  const scrollTrack = (direction: -1 | 1) => {
+    if (trackRef.current) {
+      const track = trackRef.current;
+      const cardStep = getCardStep();
+      const currentScroll = track.scrollLeft;
+      const currentIndex = Math.round(currentScroll / cardStep);
+      
+      let targetIndex = currentIndex + direction;
+      const totalCards = INDUSTRIES.length;
+      
+      if (targetIndex < 0) {
+        targetIndex = totalCards - 1;
+      } else if (targetIndex >= totalCards) {
+        targetIndex = 0;
+      }
+      
+      track.scrollTo({
+        left: targetIndex * cardStep,
+        behavior: 'smooth'
+      });
+    }
+  };
+
+  // Carousel smooth auto-scrolling effect (one after the other)
   useEffect(() => {
     if (isHovered || selectedIndustry) return;
 
     const interval = setInterval(() => {
       if (trackRef.current) {
         const track = trackRef.current;
+        const cardStep = getCardStep();
         const maxScroll = track.scrollWidth - track.clientWidth;
         
-        // Loop back to start if at the end, otherwise advance by 320px
+        const currentIndex = Math.round(track.scrollLeft / cardStep);
+        let nextIndex = currentIndex + 1;
+        
+        // Loop back to start if at the end
         if (track.scrollLeft >= maxScroll - 15) {
-          track.scrollTo({ left: 0, behavior: 'smooth' });
-        } else {
-          track.scrollBy({ left: 320, behavior: 'smooth' });
+          nextIndex = 0;
         }
+        
+        track.scrollTo({ left: nextIndex * cardStep, behavior: 'smooth' });
       }
     }, 3800);
 
