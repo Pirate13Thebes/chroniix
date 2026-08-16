@@ -26,3 +26,9 @@ dist-ssr
 # Local Netlify folder
 .netlify
 CLAUDE.md
+
+# Database & Environment Secrets
+db.json
+.env
+.env.*
+!.env.example

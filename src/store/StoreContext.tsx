@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react
 import { emptyBusinessState } from './storeReducer';
 import { StoreContext } from './storeContextCore';
 import { useSession } from '../hooks/useSession';
-import type { StoreState, StoreAction, RootState, RootAction } from './storeReducer';
+import type { StoreState, StoreAction, RootState } from './storeReducer';
 
 export function StoreProvider({ children }: { children: ReactNode }) {
   const { session } = useSession();
@@ -23,8 +23,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!businessId) {
-      setState(emptyBusinessState());
-      return;
+      const timer = setTimeout(() => {
+        setState(emptyBusinessState());
+      }, 0);
+      return () => clearTimeout(timer);
     }
 
     fetchState(businessId);
@@ -59,7 +61,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   );
 
   const root = useMemo<RootState>(() => ({ businesses: {} }), []);
-  const rootDispatch = useCallback((_action: RootAction) => {}, []);
+  const rootDispatch = useCallback(() => {}, []);
 
   const value = useMemo(() => ({ state, dispatch, root, rootDispatch }), [state, dispatch, root, rootDispatch]);
   return <StoreContext.Provider value={value}>{children}</StoreContext.Provider>;

@@ -2,7 +2,7 @@
 // into a check-in station employees use without a personal login. Physical
 // access to the device is the trust boundary here, same as a real punch
 // clock or badge reader: whoever is standing at it taps their own name.
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LogIn, LogOut, CheckCircle2, Fingerprint, Delete, Info, ArrowRight, Lock } from 'lucide-react';
 import { useStore, useStoreActions } from '../../hooks/useStore';
@@ -39,7 +39,7 @@ export function KioskPage() {
   // Shared verification logic — takes the pin value explicitly so it can be
   // called the instant the 4th digit is typed, without waiting on a state
   // round-trip (see handleNumberPress).
-  function verifyPin(value: string) {
+  const verifyPin = useCallback((value: string) => {
     if (value.length < 4) {
       setError(isFr ? 'Veuillez entrer un PIN à 4 chiffres.' : 'Please enter a 4-digit PIN.');
       return;
@@ -54,33 +54,35 @@ export function KioskPage() {
     }
     setActiveEmployee(emp);
     setError(null);
-  }
+  }, [isFr, state.employees]);
 
   // Handle PIN verification (Verify button / Enter key — reads current state)
-  function handleVerify() {
+  const handleVerify = useCallback(() => {
     verifyPin(pin);
-  }
+  }, [verifyPin, pin]);
 
   // Handle number pad button click
-  function handleNumberPress(num: number) {
-    if (pin.length >= 4) return;
-    const next = pin + String(num);
-    setPin(next);
-    setError(null);
-    if (next.length === 4) verifyPin(next);
-  }
+  const handleNumberPress = useCallback((num: number) => {
+    setPin((prev) => {
+      if (prev.length >= 4) return prev;
+      const next = prev + String(num);
+      setError(null);
+      if (next.length === 4) verifyPin(next);
+      return next;
+    });
+  }, [verifyPin]);
 
   // Handle Backspace
-  function handleBackspace() {
+  const handleBackspace = useCallback(() => {
     setPin((prev) => prev.slice(0, -1));
     setError(null);
-  }
+  }, []);
 
   // Handle Clear
-  function handleClear() {
+  const handleClear = useCallback(() => {
     setPin('');
     setError(null);
-  }
+  }, []);
 
   // Keydown event listener for physical keyboard support
   useEffect(() => {
@@ -98,7 +100,7 @@ export function KioskPage() {
     }
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [pin, activeEmployee, confirmed]);
+  }, [activeEmployee, confirmed, handleNumberPress, handleBackspace, handleClear, handleVerify]);
 
   // Trigger clock action from option modal
   function handleClockAction(action: 'in' | 'out') {

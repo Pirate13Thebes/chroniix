@@ -8,6 +8,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useSession } from '../../hooks/useSession';
 import { useLanguage } from '../../hooks/useLanguage';
 import { AuthShell } from './AuthShell';
+import { emailService } from '../../services/emailService';
 
 export function SignupPage() {
   const { t } = useLanguage();
@@ -52,6 +53,11 @@ export function SignupPage() {
       }
 
       const { employee, businessId } = await response.json();
+
+      // Send welcome email asynchronously without blocking the user
+      emailService.sendWelcomeEmail(email, fullName, companyName).catch((err) => {
+        console.error('[Signup] Failed to send welcome email:', err);
+      });
 
       loginAs('admin', employee, businessId);
       navigate('/admin');

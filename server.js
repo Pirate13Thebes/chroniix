@@ -3,6 +3,7 @@ import cors from 'cors';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import nodemailer from 'nodemailer';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -265,7 +266,7 @@ app.post('/api/auth/signup', (req, res) => {
   const trimmedEmail = email.trim().toLowerCase();
   
   const existing = Object.values(db.businesses).some((biz) =>
-    biz.employees.some((emp) => emp.email.toLowerCase() === trimmedEmail)
+    biz.employees && biz.employees.some((emp) => emp.email.toLowerCase() === trimmedEmail)
   );
   
   if (existing) {
@@ -340,6 +341,7 @@ app.post('/api/auth/login', (req, res) => {
   let businessId = null;
   
   for (const [id, biz] of Object.entries(db.businesses)) {
+    if (!biz.employees) continue;
     const match = biz.employees.find((emp) => emp.email.toLowerCase() === trimmedEmail);
     if (match) {
       existing = match;
@@ -387,6 +389,86 @@ app.post('/api/business/:businessId/action', (req, res) => {
   writeDb(db);
   
   res.json(updatedState);
+});
+
+let transporterPromise = null;
+
+async function getTransporter() {
+  if (transporterPromise) return transporterPromise;
+  
+  transporterPromise = (async () => {
+    const host = process.env.EMAIL_HOST;
+    const port = Number(process.env.EMAIL_PORT) || 587;
+    const user = process.env.EMAIL_USER;
+    const pass = process.env.EMAIL_PASS;
+    
+    if (user && pass) {
+      console.log(`[Email] Using configured SMTP server: ${host || 'smtp'}`);
+      return nodemailer.createTransport({
+        host: host || 'smtp.gmail.com',
+        port: port,
+        secure: port === 465,
+        auth: { user, pass }
+      });
+    } else {
+      console.log('[Email] No SMTP credentials found. Creating an Ethereal test account...');
+      try {
+        const testAccount = await nodemailer.createTestAccount();
+        console.log(`[Email] Ethereal account created: User = ${testAccount.user}`);
+        return nodemailer.createTransport({
+          host: 'smtp.ethereal.email',
+          port: 587,
+          secure: false,
+          auth: {
+            user: testAccount.user,
+            pass: testAccount.pass
+          }
+        });
+      } catch (err) {
+        console.error('[Email] Failed to create Ethereal account, falling back to mock transporter:', err);
+        return {
+          sendMail: async (options) => {
+            console.log('[Email Mock] Sending email to:', options.to);
+            console.log('[Email Mock] Subject:', options.subject);
+            console.log('[Email Mock] Body:', options.html);
+            return { messageId: 'mock-id' };
+          }
+        };
+      }
+    }
+  })();
+  
+  return transporterPromise;
+}
+
+app.post('/api/auth/send-email', async (req, res) => {
+  const { to, subject, html } = req.body;
+  if (!to || !subject || !html) {
+    return res.status(400).json({ error: 'Missing to, subject, or html parameters' });
+  }
+
+  try {
+    const transporter = await getTransporter();
+    const fromAddress = process.env.EMAIL_USER || 'no-reply@chronix.com';
+    const info = await transporter.sendMail({
+      from: `"Chronix Notifications" <${fromAddress}>`,
+      to,
+      subject,
+      html,
+    });
+
+    console.log(`[Email] Email sent successfully to ${to}. Message ID: ${info.messageId}`);
+    
+    const previewUrl = nodemailer.getTestMessageUrl(info);
+    if (previewUrl) {
+      console.log(`[Email Preview URL] View sent email here: ${previewUrl}`);
+    }
+
+    res.json({ success: true, messageId: info.messageId, previewUrl });
+  } catch (err) {
+    console.error('[Email] Failed to send email:', err);
+    res.status(500).json({ error: 'Failed to send email' });
+  }
 });
 
 const PORT = process.env.PORT || 5000;

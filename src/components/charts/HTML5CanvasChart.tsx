@@ -70,6 +70,9 @@ export const HTML5CanvasChart: React.FC<HTML5CanvasChartProps> = ({
   // Animation frame request ID reference for clean teardown
   const animFrameIdRef = useRef<number | null>(null);
 
+  // Particles array reference for interactive background physics
+  const particlesRef = useRef<Particle[]>([]);
+
   /**
    * Main Native 2D Canvas Chart Drawing Algorithm
    * Rendered using native canvas API: getContext('2d')
@@ -251,7 +254,7 @@ export const HTML5CanvasChart: React.FC<HTML5CanvasChartProps> = ({
   const drawParticles = useCallback(
     (ctx: CanvasRenderingContext2D, canvasWidth: number, canvasHeight: number) => {
       // Create static particle array reference
-      if (!(drawParticles as any).particles) {
+      if (particlesRef.current.length === 0) {
         const colors = ['#10b981', '#6366f1', '#f59e0b', '#3b82f6'];
         const particles: Particle[] = [];
         for (let i = 0; i < 45; i++) {
@@ -264,10 +267,10 @@ export const HTML5CanvasChart: React.FC<HTML5CanvasChartProps> = ({
             color: colors[Math.floor(Math.random() * colors.length)],
           });
         }
-        (drawParticles as any).particles = particles;
+        particlesRef.current = particles;
       }
 
-      const particles: Particle[] = (drawParticles as any).particles;
+      const particles: Particle[] = particlesRef.current;
 
       // Clear frame
       ctx.clearRect(0, 0, canvasWidth, canvasHeight);

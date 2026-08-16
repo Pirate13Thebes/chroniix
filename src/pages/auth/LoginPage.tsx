@@ -6,6 +6,7 @@ import { useLanguage } from '../../hooks/useLanguage';
 import type { SessionView } from '../../types/session';
 import { GoogleLoginModal } from './GoogleLoginModal';
 import { AuthShell } from './AuthShell';
+import { emailService } from '../../services/emailService';
 
 export function LoginPage() {
   const { t } = useLanguage();
@@ -42,6 +43,11 @@ export function LoginPage() {
       }
 
       const { employee, businessId } = await response.json();
+
+      // Send login alert email asynchronously
+      emailService.sendLoginAlertEmail(email, employee.role).catch((err) => {
+        console.error('[Login] Failed to send login alert email:', err);
+      });
 
       loginAs(view, employee, businessId);
       if (employee.mustChangePassword) {
