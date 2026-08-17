@@ -9,6 +9,7 @@ import { useSession } from '../../hooks/useSession';
 import { useLanguage } from '../../hooks/useLanguage';
 import { AuthShell } from './AuthShell';
 import { emailService } from '../../services/emailService';
+import { Eye, EyeOff } from 'lucide-react';
 
 export function SignupPage() {
   const { t } = useLanguage();
@@ -22,6 +23,7 @@ export function SignupPage() {
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
 
   async function handleSubmit(e: React.FormEvent) {
@@ -107,7 +109,38 @@ export function SignupPage() {
 
         <div className="form-field">
           <label className="form-label">{t('passwordLabel')}</label>
-          <input className="form-input" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} />
+          <div style={{ position: 'relative' }}>
+            <input
+              className="form-input"
+              type={showPassword ? 'text' : 'password'}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              minLength={6}
+              style={{ paddingRight: '2.5rem' }}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              style={{
+                position: 'absolute',
+                right: '0.75rem',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                color: 'var(--text-secondary)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '0.25rem',
+              }}
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
+            >
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
+          </div>
         </div>
 
 

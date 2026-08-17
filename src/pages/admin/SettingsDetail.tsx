@@ -1,7 +1,7 @@
 // Screen C6 — Admin Settings detail (generic shell keyed by :sectionId)
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ChevronLeft, Trash2 } from 'lucide-react';
+import { ChevronLeft, Trash2, Eye, EyeOff } from 'lucide-react';
 import { ADMIN_SETTINGS_SECTIONS } from '../../data/settingsSections';
 import { useStore, useStoreActions } from '../../hooks/useStore';
 import { useSession } from '../../hooks/useSession';
@@ -59,6 +59,9 @@ export function AdminSettingsDetail() {
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [pwError, setPwError] = useState('');
   const [pwSuccess, setPwSuccess] = useState(false);
 
@@ -471,15 +474,107 @@ export function AdminSettingsDetail() {
             <h3 style={{ fontSize: '0.95rem', marginBottom: '1rem' }}>Change Password</h3>
             <div className="form-field">
               <label className="form-label">Current Password</label>
-              <input className="form-input" type="password" value={currentPassword} onChange={(e) => { setCurrentPassword(e.target.value); setPwError(''); }} required />
+              <div style={{ position: 'relative' }}>
+                <input
+                  className="form-input"
+                  type={showCurrentPassword ? 'text' : 'password'}
+                  value={currentPassword}
+                  onChange={(e) => { setCurrentPassword(e.target.value); setPwError(''); }}
+                  required
+                  style={{ paddingRight: '2.5rem' }}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                  style={{
+                    position: 'absolute',
+                    right: '0.75rem',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    color: 'var(--text-secondary)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: '0.25rem',
+                  }}
+                  aria-label={showCurrentPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showCurrentPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
             </div>
             <div className="form-field">
               <label className="form-label">New Password</label>
-              <input className="form-input" type="password" value={newPassword} onChange={(e) => { setNewPassword(e.target.value); setPwError(''); }} required minLength={6} />
+              <div style={{ position: 'relative' }}>
+                <input
+                  className="form-input"
+                  type={showNewPassword ? 'text' : 'password'}
+                  value={newPassword}
+                  onChange={(e) => { setNewPassword(e.target.value); setPwError(''); }}
+                  required
+                  minLength={6}
+                  style={{ paddingRight: '2.5rem' }}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowNewPassword(!showNewPassword)}
+                  style={{
+                    position: 'absolute',
+                    right: '0.75rem',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    color: 'var(--text-secondary)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: '0.25rem',
+                  }}
+                  aria-label={showNewPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showNewPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
             </div>
             <div className="form-field">
               <label className="form-label">Confirm New Password</label>
-              <input className="form-input" type="password" value={confirmPassword} onChange={(e) => { setConfirmPassword(e.target.value); setPwError(''); }} required minLength={6} />
+              <div style={{ position: 'relative' }}>
+                <input
+                  className="form-input"
+                  type={showConfirmPassword ? 'text' : 'password'}
+                  value={confirmPassword}
+                  onChange={(e) => { setConfirmPassword(e.target.value); setPwError(''); }}
+                  required
+                  minLength={6}
+                  style={{ paddingRight: '2.5rem' }}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  style={{
+                    position: 'absolute',
+                    right: '0.75rem',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    color: 'var(--text-secondary)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: '0.25rem',
+                  }}
+                  aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
             </div>
             {pwError && <p style={{ color: 'var(--danger)', fontSize: '0.85rem', marginBottom: '1rem' }}>{pwError}</p>}
             {pwSuccess && <p style={{ color: 'var(--success)', fontSize: '0.85rem', marginBottom: '1rem' }}>Password updated.</p>}

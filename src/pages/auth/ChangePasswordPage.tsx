@@ -7,6 +7,7 @@ import { useSession } from '../../hooks/useSession';
 import { useStore, useStoreActions } from '../../hooks/useStore';
 import { useLanguage } from '../../hooks/useLanguage';
 import { AuthShell } from './AuthShell';
+import { Eye, EyeOff } from 'lucide-react';
 
 export function ChangePasswordPage() {
   const { t } = useLanguage();
@@ -18,6 +19,8 @@ export function ChangePasswordPage() {
   const employee = state.employees.find((e) => e.id === session?.employeeId);
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState('');
 
   if (!session || !employee) {
@@ -47,11 +50,73 @@ export function ChangePasswordPage() {
       <form onSubmit={handleSubmit}>
         <div className="form-field">
           <label className="form-label">{t('newPasswordLabel')}</label>
-          <input className="form-input" type="password" value={newPassword} onChange={(e) => { setNewPassword(e.target.value); setError(''); }} required minLength={6} />
+          <div style={{ position: 'relative' }}>
+            <input
+              className="form-input"
+              type={showNewPassword ? 'text' : 'password'}
+              value={newPassword}
+              onChange={(e) => { setNewPassword(e.target.value); setError(''); }}
+              required
+              minLength={6}
+              style={{ paddingRight: '2.5rem' }}
+            />
+            <button
+              type="button"
+              onClick={() => setShowNewPassword(!showNewPassword)}
+              style={{
+                position: 'absolute',
+                right: '0.75rem',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                color: 'var(--text-secondary)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '0.25rem',
+              }}
+              aria-label={showNewPassword ? 'Hide password' : 'Show password'}
+            >
+              {showNewPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
+          </div>
         </div>
         <div className="form-field">
           <label className="form-label">{t('confirmPasswordLabel')}</label>
-          <input className="form-input" type="password" value={confirmPassword} onChange={(e) => { setConfirmPassword(e.target.value); setError(''); }} required minLength={6} />
+          <div style={{ position: 'relative' }}>
+            <input
+              className="form-input"
+              type={showConfirmPassword ? 'text' : 'password'}
+              value={confirmPassword}
+              onChange={(e) => { setConfirmPassword(e.target.value); setError(''); }}
+              required
+              minLength={6}
+              style={{ paddingRight: '2.5rem' }}
+            />
+            <button
+              type="button"
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              style={{
+                position: 'absolute',
+                right: '0.75rem',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                color: 'var(--text-secondary)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '0.25rem',
+              }}
+              aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
+            >
+              {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
+          </div>
         </div>
         {error && <p style={{ color: 'var(--danger)', fontSize: '0.85rem', marginBottom: '1rem' }}>{error}</p>}
         <button type="submit" className="btn btn-primary-amber" style={{ width: '100%' }}>

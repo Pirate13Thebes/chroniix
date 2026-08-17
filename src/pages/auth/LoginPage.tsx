@@ -7,6 +7,7 @@ import type { SessionView } from '../../types/session';
 import { GoogleLoginModal } from './GoogleLoginModal';
 import { AuthShell } from './AuthShell';
 import { emailService } from '../../services/emailService';
+import { Eye, EyeOff } from 'lucide-react';
 
 export function LoginPage() {
   const { t } = useLanguage();
@@ -15,6 +16,7 @@ export function LoginPage() {
   const [view, setView] = useState<SessionView>('admin');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [showGoogleModal, setShowGoogleModal] = useState(false);
 
@@ -102,7 +104,37 @@ export function LoginPage() {
         </div>
         <div className="form-field">
           <label className="form-label">{t('passwordLabel')}</label>
-          <input className="form-input" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+          <div style={{ position: 'relative' }}>
+            <input
+              className="form-input"
+              type={showPassword ? 'text' : 'password'}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              style={{ paddingRight: '2.5rem' }}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              style={{
+                position: 'absolute',
+                right: '0.75rem',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                color: 'var(--text-secondary)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '0.25rem',
+              }}
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
+            >
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
+          </div>
         </div>
         {error && (
           <p style={{ color: 'var(--danger)', fontSize: '0.85rem', marginBottom: '1rem' }}>
