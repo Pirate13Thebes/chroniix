@@ -66,7 +66,7 @@ export function DesktopTopBar({ variant }: { variant: 'admin' | 'employee' }) {
 
       <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
         <button className="btn btn-outline" onClick={toggleLang} style={{ padding: '0.4rem 0.8rem', minHeight: 32 }}>
-          {lang === 'en' ? 'FR' : 'EN'}
+          {lang.toUpperCase()}
         </button>
         {variant === 'admin' && <NotificationBell />}
         {employee && (
