@@ -25,7 +25,13 @@ export function ContactPage() {
     e.preventDefault();
     setFormSubmitted(true);
     
-    // Shoot some celebratory confetti for a premium experience
+    // Construct pre-filled WhatsApp text for instant direct review
+    const waText = `Hi Chronix Team! I would like to request a demo / contact support:\n\n👤 Name: ${formData.name}\n🏢 Business Name: ${formData.businessName}\n📧 Email: ${formData.email}\n📞 Phone: ${formData.phone}\n👥 Staff Count: ${formData.employees}\n💬 Message: ${formData.message}`;
+
+    const waUrl = `https://wa.me/23054737793?text=${encodeURIComponent(waText)}`;
+    window.open(waUrl, '_blank', 'noopener');
+
+    // Shoot celebratory confetti
     confetti({
       particleCount: 80,
       spread: 60,

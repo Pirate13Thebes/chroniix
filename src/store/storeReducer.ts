@@ -7,6 +7,8 @@ import type {
   BusinessSettings,
   CheckInMethod,
   Shift,
+  WorkLocation,
+  TemporaryWorkerRecord,
 } from '../types';
 import {
   EMPLOYEES,
@@ -27,6 +29,7 @@ export interface StoreState {
   requests: Request[];
   reimbursements: Reimbursement[];
   activity: ActivityEvent[];
+  temporaryWorkers?: TemporaryWorkerRecord[];
   settings: BusinessSettings;
 }
 
@@ -39,7 +42,14 @@ export type StoreAction =
   | { type: 'DECIDE_REIMBURSEMENT'; id: string; decision: 'approved' | 'rejected' }
   | { type: 'ADD_EMPLOYEE'; payload: Employee }
   | { type: 'UPDATE_EMPLOYEE'; payload: Employee }
-  | { type: 'UPDATE_SETTINGS'; payload: Partial<BusinessSettings> };
+  | { type: 'UPDATE_SETTINGS'; payload: Partial<BusinessSettings> }
+  | { type: 'CLOCK_IN_TEMP'; name: string; phone: string; hourlyRateMUR?: number }
+  | { type: 'CLOCK_OUT_TEMP'; tempId: string }
+  | { type: 'UPDATE_TEMP_WORKER'; payload: TemporaryWorkerRecord }
+  | { type: 'DELETE_TEMP_WORKER'; id: string }
+  | { type: 'ADD_WORK_LOCATION'; payload: Omit<WorkLocation, 'id'> }
+  | { type: 'UPDATE_WORK_LOCATION'; payload: WorkLocation }
+  | { type: 'DELETE_WORK_LOCATION'; id: string };
 
 export function uid(prefix: string): string {
   return `${prefix}-${Date.now()}-${Math.floor(Math.random() * 10000)}`;

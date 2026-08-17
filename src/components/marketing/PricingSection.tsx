@@ -1,209 +1,172 @@
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../../hooks/useLanguage';
 import { useScrollReveal } from '../../hooks/useScrollReveal';
+import { Check } from 'lucide-react';
 
-const PRICING_DATA = {
-  en: {
-    badge: 'MOST POPULAR',
-    starter: {
-      name: 'Starter',
-      price: 'MUR 800',
-      period: '/employee/month',
-      desc: 'Everything a growing Mauritian business needs to track attendance and run shifts properly.',
-      limit: '',
-      features: [
-        { text: 'QR code clock-in kiosks', enabled: true },
-        { text: 'Daily shift scheduler', enabled: true },
-        { text: 'Attendance registry & standard reports', enabled: true },
-        { text: 'MCB & ABSA payroll CSV exports', enabled: true },
-        { text: 'EN/FR interface', enabled: true },
-        { text: 'Email support', enabled: true },
-        { text: '2 administrator seats', enabled: true },
-      ]
-    },
-    growth: {
-      name: 'Growth',
-      price: 'MUR 1,100',
-      period: '/employee/month',
-      desc: 'For multi-branch operations that need proper leave, reimbursement, and team management workflows.',
-      limit: '',
-      features: [
-        { text: 'Everything in Starter, plus:', enabled: true },
-        { text: 'Multi-branch management', enabled: true },
-        { text: 'Leave & absence workflows', enabled: true },
-        { text: 'Reimbursement claims & receipts', enabled: true },
-        { text: 'Supervisor group clock-in', enabled: true },
-        { text: 'WhatsApp & SMS employee onboarding', enabled: true },
-        { text: 'Department performance reports', enabled: true },
-        { text: 'Priority email + WhatsApp support', enabled: true },
-        { text: '5 administrator seats', enabled: true },
-      ]
-    },
-    enterprise: {
-      name: 'Enterprise',
-      price: 'MUR 1,400',
-      period: '/employee/month',
-      desc: 'For large hotels, factories, and retail chains that need white-glove service.',
-      limit: '',
-      features: [
-        { text: 'Everything in Growth, plus:', enabled: true },
-        { text: 'Migrant worker permit tracking with 30-day expiry alerts', enabled: true },
-        { text: 'Custom payroll CSV formats beyond MCB/ABSA', enabled: true },
-        { text: 'Dedicated account manager', enabled: true },
-        { text: '4-hour response SLA', enabled: true },
-        { text: '99.9% uptime SLA', enabled: true },
-        { text: 'Guided onboarding & on-site HR training', enabled: true },
-        { text: 'Unlimited administrator seats', enabled: true },
-      ]
-    },
-    contactSales: 'Contact Sales',
-    startTrial: 'Start Free Trial',
+const PLANS_LIST = [
+  {
+    id: 'starter',
+    name: 'Starter',
+    price: 'MUR 1,500',
+    period: '/month',
+    employees: 'Up to 20 employees',
+    desc: 'For small teams that need a simple, reliable way to manage attendance and payroll.',
+    popular: true,
+    features: [
+      'Full access to all Chronix features',
+      'Up to 20 employees',
+      '2 admin accounts (owner + one manager)',
+      'Email support',
+    ],
   },
-  fr: {
-    badge: 'LE PLUS POPULAIRE',
-    starter: {
-      name: 'Starter',
-      price: 'MUR 800',
-      period: '/employé/mois',
-      desc: 'Tout ce dont une entreprise mauricienne en croissance a besoin pour suivre la présence et gérer les horaires correctement.',
-      limit: '',
-      features: [
-        { text: 'Bornes de pointage par code QR', enabled: true },
-        { text: 'Planificateur d\'horaire quotidien', enabled: true },
-        { text: 'Registre de présence & rapports standards', enabled: true },
-        { text: 'Exports CSV de paie MCB & ABSA', enabled: true },
-        { text: 'Interface EN/FR', enabled: true },
-        { text: 'Support par e-mail', enabled: true },
-        { text: '2 comptes administrateur', enabled: true },
-      ]
-    },
-    growth: {
-      name: 'Growth',
-      price: 'MUR 1 100',
-      period: '/employé/mois',
-      desc: 'Pour les opérations multi-succursales ayant besoin de vrais flux de congés, remboursements et gestion d\'équipe.',
-      limit: '',
-      features: [
-        { text: 'Tout ce qui est dans Starter, plus :', enabled: true },
-        { text: 'Gestion multi-succursales', enabled: true },
-        { text: 'Flux de congés & absences', enabled: true },
-        { text: 'Notes de frais & reçus', enabled: true },
-        { text: 'Pointage de groupe par superviseur', enabled: true },
-        { text: 'Intégration des employés par WhatsApp & SMS', enabled: true },
-        { text: 'Rapports de performance par département', enabled: true },
-        { text: 'Support prioritaire e-mail + WhatsApp', enabled: true },
-        { text: '5 comptes administrateur', enabled: true },
-      ]
-    },
-    enterprise: {
-      name: 'Enterprise',
-      price: 'MUR 1 400',
-      period: '/employé/mois',
-      desc: 'Pour les grands hôtels, usines et chaînes de magasins ayant besoin d\'un service haut de gamme.',
-      limit: '',
-      features: [
-        { text: 'Tout ce qui est dans Growth, plus :', enabled: true },
-        { text: 'Suivi des permis de travail des travailleurs migrants avec alertes d\'expiration à 30 jours', enabled: true },
-        { text: 'Formats CSV de paie personnalisés au-delà de MCB/ABSA', enabled: true },
-        { text: 'Gestionnaire de compte dédié', enabled: true },
-        { text: 'SLA de réponse de 4 heures', enabled: true },
-        { text: 'SLA de disponibilité de 99,9 %', enabled: true },
-        { text: 'Onboarding guidé & formation RH sur site', enabled: true },
-        { text: 'Comptes administrateur illimités', enabled: true },
-      ]
-    },
-    contactSales: 'Contacter le Support',
-    startTrial: 'Démarrer l\'essai gratuit',
-  }
-} as const;
+  {
+    id: 'silver',
+    name: 'Silver',
+    price: 'MUR 2,500',
+    period: '/month',
+    employees: 'Up to 30 employees',
+    desc: 'For growing businesses that need more capacity without losing control of day-to-day operations.',
+    popular: false,
+    features: [
+      'Full access to all Chronix features',
+      'Up to 30 employees',
+      '5 admin accounts (owner, HR, up to 3 managers)',
+      'Email & WhatsApp support (replies within 1 business day)',
+    ],
+  },
+  {
+    id: 'gold',
+    name: 'Gold',
+    price: 'MUR 4,000',
+    period: '/month',
+    employees: 'Up to 60 employees',
+    desc: 'For medium-sized businesses that need stronger team management and room to scale.',
+    popular: false,
+    features: [
+      'Full access to all Chronix features',
+      'Up to 60 employees',
+      '10 admin accounts (for multi-department teams)',
+      'Priority WhatsApp support (within 2 hrs, business hours)',
+      'On-site training available (paid add-on)',
+    ],
+  },
+  {
+    id: 'platinum',
+    name: 'Platinum',
+    price: 'MUR 6,000',
+    period: '/month',
+    employees: 'Up to 120 employees',
+    desc: 'For larger businesses that need higher capacity, dedicated support, and hands-on setup.',
+    popular: false,
+    features: [
+      'Full access to all Chronix features',
+      'Up to 120 employees',
+      'Unlimited admins (across every site & department)',
+      'Dedicated support (named contact, same-day response)',
+      'On-site training included',
+      'Custom integrations available (paid add-on)',
+    ],
+  },
+  {
+    id: 'platinum_plus',
+    name: 'Platinum Plus',
+    price: 'MUR 8,500',
+    period: '/month',
+    employees: 'Up to 200 employees',
+    desc: 'For established businesses that have outgrown Business but don\'t need a fully custom setup.',
+    popular: false,
+    features: [
+      'Full access to all Chronix features',
+      'Up to 200 employees',
+      'Unlimited admins (across every site & department)',
+      'Dedicated support (named contact, same-day response)',
+      'On-site training included',
+      'Custom integrations available (paid add-on)',
+    ],
+  },
+  {
+    id: 'diamond',
+    name: 'Diamond',
+    price: 'MUR 12,000',
+    period: '/month',
+    employees: 'Unlimited employees',
+    desc: 'For large organisations that need custom setup, integrations built into the price, and a dedicated account manager.',
+    popular: false,
+    features: [
+      'Full access to all Chronix features',
+      'Unlimited employees',
+      'Unlimited admins',
+      'Dedicated account manager',
+      'On-site training included',
+      'Custom integrations included',
+    ],
+  },
+];
 
 export function PricingSection() {
-  const { t, lang } = useLanguage();
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const revealRef = useScrollReveal<HTMLElement>();
 
-  const data = PRICING_DATA[lang === 'fr' ? 'fr' : 'en'];
-
   return (
-    <section className="section reveal" id="pricing" ref={revealRef} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+    <section className="section reveal" id="pricing" ref={revealRef} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
       <h2 className="section-title" style={{ textAlign: 'center' }}>{t('pricingTitle')}</h2>
       <p style={{ color: 'var(--text-secondary)', marginBottom: '3rem', textAlign: 'center', maxWidth: '600px' }}>
-        {t('pricingSubtitle')}
+        Simple, transparent plans designed to scale with your Mauritian business.
       </p>
 
-      <div className="pricing-grid">
-        {/* Starter Plan Card (Featured) */}
-        <div className="card pricing-card--popular" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-          <div className="popular-badge">{data.badge}</div>
-          <h3 style={{ fontSize: '1.25rem', fontWeight: 700, margin: '0.5rem 0 0.5rem 0' }}>{data.starter.name}</h3>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', minHeight: '60px', margin: '0 0 1rem 0' }}>
-            {data.starter.desc}
-          </p>
-          <div style={{ fontSize: '2.25rem', fontWeight: 800, margin: '0 0 0.25rem 0', color: 'var(--chronix-navy)' }}>
-            {data.starter.price}
-            <span style={{ fontSize: '1rem', fontWeight: 400, color: 'var(--text-secondary)' }}>{data.starter.period}</span>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(310px, 1fr))', gap: '1.5rem', width: '100%', maxWidth: '1200px' }}>
+        {PLANS_LIST.map((plan) => (
+          <div
+            key={plan.id}
+            className={`card ${plan.popular ? 'pricing-card--popular' : ''}`}
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              justify: 'space-between',
+              position: 'relative',
+              border: plan.popular ? '2px solid var(--chronix-amber)' : '1px solid var(--border)',
+            }}
+          >
+            {plan.popular && (
+              <div className="popular-badge">RECOMMENDED</div>
+            )}
+
+            <div>
+              <h3 style={{ fontSize: '1.3rem', fontWeight: 800, color: 'var(--chronix-navy)', margin: '0.5rem 0 0.25rem 0' }}>
+                {plan.name}
+              </h3>
+              <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--chronix-amber)', marginBottom: '0.75rem' }}>
+                {plan.employees}
+              </div>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', minHeight: '48px', marginBottom: '1.25rem', lineHeight: 1.5 }}>
+                {plan.desc}
+              </p>
+
+              <div style={{ fontSize: '2rem', fontWeight: 850, color: 'var(--chronix-navy)', marginBottom: '1.25rem' }}>
+                {plan.price}
+                <span style={{ fontSize: '0.9rem', fontWeight: 500, color: 'var(--text-secondary)' }}>{plan.period}</span>
+              </div>
+
+              <ul className="pricing-features-list" style={{ marginBottom: '1.5rem', paddingLeft: 0, listStyle: 'none' }}>
+                {plan.features.map((feat, idx) => (
+                  <li key={idx} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem', fontSize: '0.88rem', color: 'var(--text-main)', marginBottom: '0.6rem' }}>
+                    <Check size={16} color="var(--success)" style={{ flexShrink: 0, marginTop: 3 }} />
+                    <span>{feat}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <button
+              className={`btn ${plan.popular ? 'btn-primary-amber' : 'btn-outline'}`}
+              style={{ width: '100%', marginTop: 'auto' }}
+              onClick={() => navigate('/signup')}
+            >
+              Start 7-Day Free Trial
+            </button>
           </div>
-
-          <ul className="pricing-features-list" style={{ flexGrow: 1 }}>
-            {data.starter.features.map((f, idx) => (
-              <li key={idx} className={`pricing-feature-item ${f.enabled ? '' : 'disabled'}`}>
-                {f.text}
-              </li>
-            ))}
-          </ul>
-
-          <button className="btn btn-primary-amber" style={{ width: '100%', marginTop: '1.5rem' }} onClick={() => navigate('/signup')}>
-            {data.startTrial}
-          </button>
-        </div>
-
-        {/* Growth Plan Card */}
-        <div className="card" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-          <h3 style={{ fontSize: '1.25rem', fontWeight: 700, margin: '0 0 0.5rem 0' }}>{data.growth.name}</h3>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', minHeight: '60px', margin: '0 0 1rem 0' }}>
-            {data.growth.desc}
-          </p>
-          <div style={{ fontSize: '2.25rem', fontWeight: 800, margin: '0 0 0.25rem 0', color: 'var(--chronix-navy)' }}>
-            {data.growth.price}
-            <span style={{ fontSize: '1rem', fontWeight: 400, color: 'var(--text-secondary)' }}>{data.growth.period}</span>
-          </div>
-
-          <ul className="pricing-features-list" style={{ flexGrow: 1 }}>
-            {data.growth.features.map((f, idx) => (
-              <li key={idx} className={`pricing-feature-item ${f.enabled ? '' : 'disabled'}`}>
-                {f.text}
-              </li>
-            ))}
-          </ul>
-
-          <button className="btn btn-outline" style={{ width: '100%', marginTop: '1.5rem' }} onClick={() => navigate('/signup')}>
-            {data.startTrial}
-          </button>
-        </div>
-
-        {/* Enterprise Plan Card */}
-        <div className="card" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-          <h3 style={{ fontSize: '1.25rem', fontWeight: 700, margin: '0 0 0.5rem 0' }}>{data.enterprise.name}</h3>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', minHeight: '60px', margin: '0 0 1rem 0' }}>
-            {data.enterprise.desc}
-          </p>
-          <div style={{ fontSize: '2.25rem', fontWeight: 800, margin: '0 0 0.25rem 0', color: 'var(--chronix-navy)' }}>
-            {data.enterprise.price}
-            <span style={{ fontSize: '1rem', fontWeight: 400, color: 'var(--text-secondary)' }}>{data.enterprise.period}</span>
-          </div>
-
-          <ul className="pricing-features-list" style={{ flexGrow: 1 }}>
-            {data.enterprise.features.map((f, idx) => (
-              <li key={idx} className={`pricing-feature-item ${f.enabled ? '' : 'disabled'}`}>
-                {f.text}
-              </li>
-            ))}
-          </ul>
-
-          <button className="btn btn-outline" style={{ width: '100%', marginTop: '1.5rem' }} onClick={() => navigate('/contact')}>
-            {data.contactSales}
-          </button>
-        </div>
+        ))}
       </div>
     </section>
   );

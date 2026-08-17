@@ -7,27 +7,51 @@ import logo from '../../assets/chronix_logo.png';
 
 const SUPPORT_PHONE = '23054737793';
 
-type PlanId = 'starter' | 'growth' | 'enterprise';
+type PlanId = 'starter' | 'silver' | 'gold' | 'platinum' | 'platinum_plus' | 'diamond';
 type PayMethod = 'juice' | 'bank_transfer';
 
-const PLANS: Record<PlanId, { name: string; price: number; tagline: string; features: string[] }> = {
+const PLANS: Record<PlanId, { name: string; price: number; tagline: string; employees: string; features: string[] }> = {
   starter: {
     name: 'Starter',
-    price: 800,
-    tagline: 'Best for small teams getting started.',
-    features: ['QR code clock-in', 'Shift scheduling', 'Attendance reports', 'Payroll CSV export', 'Email support', '2 admin seats'],
+    price: 1500,
+    employees: 'Up to 20 employees',
+    tagline: 'Simple, reliable way to manage attendance and payroll.',
+    features: ['Full access to all Chronix features', 'Up to 20 employees', '2 admin accounts (owner + manager)', 'Email support'],
   },
-  growth: {
-    name: 'Growth',
-    price: 1100,
-    tagline: 'For growing businesses with advanced needs.',
-    features: ['Everything in Starter, plus:', 'Leave management', 'Reimbursements', 'Department reports', 'Priority support', '5 admin seats'],
+  silver: {
+    name: 'Silver',
+    price: 2500,
+    employees: 'Up to 30 employees',
+    tagline: 'More capacity without losing control of operations.',
+    features: ['Full access to all Chronix features', 'Up to 30 employees', '5 admin accounts (owner, HR, 3 managers)', 'Email & WhatsApp support (1 day response)'],
   },
-  enterprise: {
-    name: 'Enterprise',
-    price: 1400,
-    tagline: 'For large operations that need full control.',
-    features: ['Everything in Growth, plus:', 'Permit tracking', 'Custom integrations', 'Dedicated manager', '4-hour response SLA', 'Unlimited admin seats'],
+  gold: {
+    name: 'Gold',
+    price: 4000,
+    employees: 'Up to 60 employees',
+    tagline: 'Stronger team management and room to scale.',
+    features: ['Full access to all Chronix features', 'Up to 60 employees', '10 admin accounts', 'Priority WhatsApp support (within 2 hrs)', 'On-site training available'],
+  },
+  platinum: {
+    name: 'Platinum',
+    price: 6000,
+    employees: 'Up to 120 employees',
+    tagline: 'Higher capacity, dedicated support & hands-on setup.',
+    features: ['Full access to all Chronix features', 'Up to 120 employees', 'Unlimited admins', 'Dedicated support (same-day response)', 'On-site training included'],
+  },
+  platinum_plus: {
+    name: 'Platinum Plus',
+    price: 8500,
+    employees: 'Up to 200 employees',
+    tagline: 'For established businesses needing scale.',
+    features: ['Full access to all Chronix features', 'Up to 200 employees', 'Unlimited admins', 'Dedicated support (same-day response)', 'On-site training included'],
+  },
+  diamond: {
+    name: 'Diamond',
+    price: 12000,
+    employees: 'Unlimited employees',
+    tagline: 'Custom setup, built-in integrations & account manager.',
+    features: ['Full access to all Chronix features', 'Unlimited employees', 'Unlimited admins', 'Dedicated account manager', 'Custom integrations included'],
   },
 };
 
@@ -72,7 +96,7 @@ export function CheckoutPage() {
   const [payMethod, setPayMethod] = useState<PayMethod>('juice');
   const [paymentReference] = useState(() => state.settings.paymentReference || generatePaymentReference());
 
-  const total = (Number(employeeCount) || 0) * PLANS[selectedPlan].price;
+  const total = PLANS[selectedPlan].price;
 
   function handleBack() {
     if (step === 1) {
@@ -166,7 +190,8 @@ export function CheckoutPage() {
                     <div style={{ fontSize: '1.7rem', fontWeight: 800, color: 'var(--chronix-navy)' }}>
                       MUR {plan.price.toLocaleString('en-US')}
                     </div>
-                    <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '0.85rem' }}>/ employee / month</div>
+                    <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--chronix-amber)', marginBottom: '0.5rem' }}>{plan.employees}</div>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '0.85rem' }}>/ month</div>
                     <p style={{ fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.75rem', paddingBottom: '0.75rem', borderBottom: '1px solid var(--border)' }}>
                       {plan.tagline}
                     </p>

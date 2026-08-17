@@ -213,6 +213,79 @@ function reducer(state, action) {
     case 'UPDATE_SETTINGS': {
       return { ...state, settings: { ...state.settings, ...action.payload } };
     }
+    case 'CLOCK_IN_TEMP': {
+      const at = nowIso();
+      const newTemp = {
+        id: uid('temp'),
+        name: action.name.trim(),
+        phone: action.phone.trim(),
+        clockIn: at,
+        clockOut: null,
+        hours: null,
+        hourlyRateMUR: action.hourlyRateMUR || 0,
+        date: todayIso(),
+        status: 'clocked_in',
+      };
+      return {
+        ...state,
+        temporaryWorkers: [newTemp, ...(state.temporaryWorkers || [])],
+      };
+    }
+    case 'CLOCK_OUT_TEMP': {
+      const at = nowIso();
+      const list = state.temporaryWorkers || [];
+      const target = list.find((t) => t.id === action.tempId && t.status === 'clocked_in');
+      if (!target) return state;
+      const hours = Math.max(0, Math.round(((new Date(at).getTime() - new Date(target.clockIn).getTime()) / 3600000) * 100) / 100);
+      return {
+        ...state,
+        temporaryWorkers: list.map((t) =>
+          t.id === action.tempId ? { ...t, clockOut: at, hours, status: 'clocked_out' } : t
+        ),
+      };
+    }
+    case 'UPDATE_TEMP_WORKER': {
+      const list = state.temporaryWorkers || [];
+      return {
+        ...state,
+        temporaryWorkers: list.map((t) => (t.id === action.payload.id ? { ...t, ...action.payload } : t)),
+      };
+    }
+    case 'DELETE_TEMP_WORKER': {
+      const list = state.temporaryWorkers || [];
+      return {
+        ...state,
+        temporaryWorkers: list.filter((t) => t.id !== action.id),
+      };
+    }
+    case 'ADD_WORK_LOCATION': {
+      const locs = state.settings.workLocations || [];
+      const newLoc = { id: uid('loc'), radiusMeters: 150, lat: -20.2, lng: 57.5, ...action.payload };
+      return {
+        ...state,
+        settings: { ...state.settings, workLocations: [...locs, newLoc] },
+      };
+    }
+    case 'UPDATE_WORK_LOCATION': {
+      const locs = state.settings.workLocations || [];
+      return {
+        ...state,
+        settings: {
+          ...state.settings,
+          workLocations: locs.map((l) => (l.id === action.payload.id ? { ...l, ...action.payload } : l)),
+        },
+      };
+    }
+    case 'DELETE_WORK_LOCATION': {
+      const locs = state.settings.workLocations || [];
+      return {
+        ...state,
+        settings: {
+          ...state.settings,
+          workLocations: locs.filter((l) => l.id !== action.id),
+        },
+      };
+    }
     default:
       return state;
   }
@@ -245,6 +318,47 @@ app.use(express.json());
 
 // Load initial database
 readDb();
+
+app.get('/api/super-admin/businesses', (req, res) => {
+  const db = readDb();
+  const result = [];
+  for (const [id, biz] of Object.entries(db.businesses)) {
+    const owner = (biz.employees || []).find((e) => e.role === 'admin') || (biz.employees || [])[0];
+    result.push({
+      id,
+      companyName: biz.settings?.companyName || 'Unnamed Business',
+      ownerName: owner ? `${owner.firstName} ${owner.lastName}` : 'N/A',
+      ownerEmail: owner ? owner.email : 'N/A',
+      ownerPhone: owner ? owner.phone : 'N/A',
+      employeeCount: (biz.employees || []).filter((e) => e.status !== 'terminated').length,
+      plan: biz.settings?.plan || 'starter',
+      trialStartedAt: biz.settings?.trialStartedAt || null,
+      trialCancelled: biz.settings?.trialCancelled || false,
+      isLocked: biz.settings?.isLocked || false,
+      billingStatus: biz.settings?.billingStatus || 'none',
+      paymentMethod: biz.settings?.paymentMethod || null,
+      paymentReference: biz.settings?.paymentReference || null,
+      joinedAt: owner?.joinedAt || null,
+    });
+  }
+  res.json(result);
+});
+
+app.post('/api/super-admin/business/:businessId/status', (req, res) => {
+  const { businessId } = req.params;
+  const { isLocked, trialCancelled, plan, billingStatus } = req.body;
+  const db = readDb();
+  const biz = db.businesses[businessId];
+  if (!biz) return res.status(404).json({ error: 'Business not found' });
+  
+  if (isLocked !== undefined) biz.settings.isLocked = isLocked;
+  if (trialCancelled !== undefined) biz.settings.trialCancelled = trialCancelled;
+  if (plan !== undefined) biz.settings.plan = plan;
+  if (billingStatus !== undefined) biz.settings.billingStatus = billingStatus;
+
+  writeDb(db);
+  res.json({ success: true, settings: biz.settings });
+});
 
 app.get('/api/auth/google-admins', (req, res) => {
   const db = readDb();

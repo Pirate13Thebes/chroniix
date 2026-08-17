@@ -185,14 +185,65 @@ export function AdminSettingsDetail() {
 
         {section.id === 'work-location-settings' && (
           <div>
-            <h3 style={{ marginBottom: '1rem', fontSize: '0.95rem' }}>Work Locations</h3>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+              <h3 style={{ fontSize: '0.95rem', margin: 0 }}>Work Locations</h3>
+              <button
+                type="button"
+                className="btn btn-primary-navy"
+                style={{ fontSize: '0.8rem', padding: '0.35rem 0.75rem' }}
+                onClick={() => {
+                  const name = prompt('Work Location Name (e.g. Headquarters):');
+                  if (!name) return;
+                  const address = prompt('Address (e.g. Port Louis, Mauritius):') || name;
+                  const radiusMeters = Number(prompt('Radius in meters (e.g. 150):') || '150');
+                  const newLoc = { id: uid('loc'), name, address, radiusMeters, lat: -20.2, lng: 57.5 };
+                  updateSettings({ workLocations: [...state.settings.workLocations, newLoc] });
+                }}
+              >
+                + Add Work Location
+              </button>
+            </div>
+
+            {state.settings.workLocations.length === 0 && <p className="empty-state">No work locations configured.</p>}
             {state.settings.workLocations.map((loc) => (
-              <div key={loc.id} className="side-panel-row">
+              <div key={loc.id} className="side-panel-row" style={{ alignItems: 'center' }}>
                 <div className="side-panel-row-main">
                   <div className="side-panel-name">{loc.name}</div>
-                  <div className="side-panel-sub">{loc.address}</div>
+                  <div className="side-panel-sub">{loc.address} · radius {loc.radiusMeters}m</div>
                 </div>
-                <span className="side-panel-sub">radius {loc.radiusMeters}m</span>
+                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <button
+                    type="button"
+                    className="btn btn-outline"
+                    style={{ fontSize: '0.8rem', padding: '0.3rem 0.6rem' }}
+                    onClick={() => {
+                      const newName = prompt('Edit Location Name:', loc.name);
+                      if (newName === null) return;
+                      const newAddr = prompt('Edit Location Address:', loc.address) ?? loc.address;
+                      const newRad = Number(prompt('Edit Radius (meters):', String(loc.radiusMeters)) || loc.radiusMeters);
+                      const updatedLocs = state.settings.workLocations.map((l) =>
+                        l.id === loc.id ? { ...l, name: newName, address: newAddr, radiusMeters: newRad } : l
+                      );
+                      updateSettings({ workLocations: updatedLocs });
+                    }}
+                  >
+                    Edit
+                  </button>
+                  {state.settings.workLocations.length > 1 && (
+                    <button
+                      type="button"
+                      className="btn btn-outline"
+                      style={{ fontSize: '0.8rem', padding: '0.3rem 0.6rem', color: 'var(--danger)', borderColor: 'var(--danger)' }}
+                      onClick={() => {
+                        if (confirm(`Delete location "${loc.name}"?`)) {
+                          updateSettings({ workLocations: state.settings.workLocations.filter((l) => l.id !== loc.id) });
+                        }
+                      }}
+                    >
+                      Delete
+                    </button>
+                  )}
+                </div>
               </div>
             ))}
           </div>
@@ -217,16 +268,36 @@ export function AdminSettingsDetail() {
               </label>
             ))}
 
-            {state.settings.checkInMethods.includes('kiosk') && (
-              <div style={{ marginTop: '1.25rem', paddingTop: '1.25rem', borderTop: '1px solid var(--border)' }}>
-                <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '0.75rem' }}>
-                  Open this on a shared tablet or computer at your entrance — employees tap their own name to clock in or out.
-                </p>
-                <a href="/kiosk" target="_blank" rel="noreferrer" className="btn btn-primary-navy" style={{ display: 'inline-flex' }}>
-                  Launch Kiosk Terminal →
+            <div style={{ marginTop: '1.25rem', paddingTop: '1.25rem', borderTop: '1px solid var(--border)' }}>
+              <h4 style={{ fontSize: '0.9rem', marginBottom: '0.5rem', fontWeight: 700 }}>QR Code & Kiosk Check-In Terminals</h4>
+              <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '1rem' }}>
+                Print or display the QR code at your business entrance for temporary worker check-in, or launch the interactive kiosk terminal for registered staff.
+              </p>
+              <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+                {state.settings.checkInMethods.includes('kiosk') && (
+                  <a href="/kiosk" target="_blank" rel="noreferrer" className="btn btn-primary-navy">
+                    Launch Kiosk Terminal →
+                  </a>
+                )}
+                <a href="/temp-checkin" target="_blank" rel="noreferrer" className="btn btn-primary-amber">
+                  Open QR Check-In Page 📱
                 </a>
               </div>
-            )}
+
+              <div className="card" style={{ marginTop: '1.25rem', textAlign: 'center', background: 'var(--bg-page)' }}>
+                <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--chronix-navy)', marginBottom: '0.75rem' }}>
+                  Temporary Worker QR Code
+                </div>
+                <img
+                  src={`https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(window.location.origin + '/temp-checkin')}`}
+                  alt="Temporary Worker Check-In QR Code"
+                  style={{ width: 160, height: 160, borderRadius: 12, border: '4px solid #fff', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                />
+                <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginTop: '0.75rem' }}>
+                  Scan with any phone camera to clock in as a temporary worker.
+                </p>
+              </div>
+            </div>
           </div>
         )}
 
@@ -234,14 +305,21 @@ export function AdminSettingsDetail() {
           <div>
             {(() => {
               const trial = getTrialStatus(state.settings);
-              const planNames: Record<string, string> = { starter: 'Starter', growth: 'Growth', enterprise: 'Enterprise' };
+              const planNames: Record<string, string> = {
+                starter: 'Starter',
+                silver: 'Silver',
+                gold: 'Gold',
+                platinum: 'Platinum',
+                platinum_plus: 'Platinum Plus',
+                diamond: 'Diamond',
+              };
               return (
                 <>
                   <h3 style={{ marginBottom: '0.75rem', fontSize: '0.95rem' }}>Chronix Plan</h3>
                   <div className="side-panel-row" style={{ marginBottom: '1.5rem' }}>
                     <div className="side-panel-row-main">
                       <div className="side-panel-name">
-                        {state.settings.plan ? `${planNames[state.settings.plan]} Plan` : 'No plan selected yet'}
+                        {state.settings.plan ? `${planNames[state.settings.plan] || state.settings.plan} Plan` : 'No plan selected yet'}
                       </div>
                       <div className="side-panel-sub">
                         {state.settings.billingStatus === 'awaiting_confirmation'
@@ -285,15 +363,44 @@ export function AdminSettingsDetail() {
                     )}
                   </div>
 
-                  <h3 style={{ margin: '1.5rem 0 0.75rem', fontSize: '0.95rem' }}>Payment Method</h3>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: '1.5rem 0 0.75rem' }}>
+                    <h3 style={{ fontSize: '0.95rem', margin: 0 }}>Payment Method</h3>
+                    <button
+                      type="button"
+                      className="btn btn-outline"
+                      style={{ fontSize: '0.8rem', padding: '0.3rem 0.75rem' }}
+                      onClick={() => {
+                        const brand = prompt('Card Brand (e.g. Visa, Mastercard):', 'Visa');
+                        if (!brand) return;
+                        const last4 = prompt('Last 4 digits:', '4242') || '4242';
+                        const expiry = prompt('Expiry Date (MM/YY):', '12/28') || '12/28';
+                        updateSettings({ billingCard: { brand, last4, expiry } });
+                      }}
+                    >
+                      {state.settings.billingCard ? 'Edit Card' : '+ Add Card'}
+                    </button>
+                  </div>
+
                   {state.settings.billingCard ? (
                     <div className="side-panel-row">
                       <div className="side-panel-row-main">
                         <div className="side-panel-name">
-                          {state.settings.billingCard.brand} •••• {state.settings.billingCard.last4}
+                          💳 {state.settings.billingCard.brand} •••• {state.settings.billingCard.last4}
                         </div>
                         <div className="side-panel-sub">Expires {state.settings.billingCard.expiry}</div>
                       </div>
+                      <button
+                        type="button"
+                        className="btn btn-outline"
+                        style={{ fontSize: '0.8rem', color: 'var(--danger)', borderColor: 'var(--danger)' }}
+                        onClick={() => {
+                          if (confirm('Remove your payment card on file?')) {
+                            updateSettings({ billingCard: null });
+                          }
+                        }}
+                      >
+                        Remove Card
+                      </button>
                     </div>
                   ) : (
                     <p className="empty-state">No card on file.</p>

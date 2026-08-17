@@ -65,6 +65,15 @@ export function DesktopTopBar({ variant }: { variant: 'admin' | 'employee' }) {
       )}
 
       <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+        {variant === 'admin' && (
+          <a
+            href="/super-admin"
+            className="btn btn-outline"
+            style={{ padding: '0.35rem 0.7rem', fontSize: '0.78rem', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}
+          >
+            🛡️ Super Admin
+          </a>
+        )}
         <button className="btn btn-outline" onClick={toggleLang} style={{ padding: '0.4rem 0.8rem', minHeight: 32 }}>
           {lang.toUpperCase()}
         </button>

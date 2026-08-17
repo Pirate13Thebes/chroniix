@@ -117,6 +117,20 @@ export interface BillingCard {
   expiry: string; // MM/YY
 }
 
+export type PlanType = 'starter' | 'silver' | 'gold' | 'platinum' | 'platinum_plus' | 'diamond';
+
+export interface TemporaryWorkerRecord {
+  id: string;
+  name: string;
+  phone: string;
+  clockIn: string; // ISO datetime
+  clockOut: string | null; // ISO datetime
+  hours: number | null;
+  hourlyRateMUR: number;
+  date: string; // YYYY-MM-DD
+  status: 'clocked_in' | 'clocked_out';
+}
+
 export interface BusinessSettings {
   companyName: string;
   logoUrl: string;
@@ -130,9 +144,10 @@ export interface BusinessSettings {
   departments: string[];
   trialStartedAt: string | null; // ISO datetime
   trialCancelled: boolean;
+  isLocked?: boolean;
   billingCard: BillingCard | null;
   defaultReportRangeDays: number;
-  plan: 'starter' | 'growth' | 'enterprise' | null;
+  plan: PlanType | null;
   billingStatus: 'none' | 'awaiting_confirmation' | 'confirmed';
   paymentMethod: 'juice' | 'bank_transfer' | null;
   paymentReference: string | null;

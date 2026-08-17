@@ -35,6 +35,14 @@ export function useStoreActions() {
       },
       updateEmployee: (payload: Employee) => dispatch({ type: 'UPDATE_EMPLOYEE', payload }),
       updateSettings: (payload: Partial<BusinessSettings>) => dispatch({ type: 'UPDATE_SETTINGS', payload }),
+      clockInTemp: (name: string, phone: string, hourlyRateMUR?: number) =>
+        dispatch({ type: 'CLOCK_IN_TEMP', name, phone, hourlyRateMUR }),
+      clockOutTemp: (tempId: string) => dispatch({ type: 'CLOCK_OUT_TEMP', tempId }),
+      updateTempWorker: (payload: any) => dispatch({ type: 'UPDATE_TEMP_WORKER', payload }),
+      deleteTempWorker: (id: string) => dispatch({ type: 'DELETE_TEMP_WORKER', id }),
+      addWorkLocation: (payload: any) => dispatch({ type: 'ADD_WORK_LOCATION', payload }),
+      updateWorkLocation: (payload: any) => dispatch({ type: 'UPDATE_WORK_LOCATION', payload }),
+      deleteWorkLocation: (id: string) => dispatch({ type: 'DELETE_WORK_LOCATION', id }),
     }),
     [dispatch, rootDispatch]
   );

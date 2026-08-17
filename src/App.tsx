@@ -8,7 +8,9 @@ import { LoginPage } from './pages/auth/LoginPage';
 import { SignupPage } from './pages/auth/SignupPage';
 import { ChangePasswordPage } from './pages/auth/ChangePasswordPage';
 import { KioskPage } from './pages/kiosk/KioskPage';
+import { TempCheckInPage } from './pages/kiosk/TempCheckInPage';
 import { CheckoutPage } from './pages/billing/CheckoutPage';
+import { SuperAdminPage } from './pages/superadmin/SuperAdminPage';
 import { AboutPage } from './pages/marketing/AboutPage';
 import { ContactPage } from './pages/marketing/ContactPage';
 import { PrivacyPage } from './pages/marketing/PrivacyPage';
@@ -41,6 +43,8 @@ function App() {
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/employee/change-password" element={<ChangePasswordPage />} />
         <Route path="/kiosk" element={<KioskPage />} />
+        <Route path="/temp-checkin" element={<TempCheckInPage />} />
+        <Route path="/super-admin" element={<SuperAdminPage />} />
         <Route path="/billing/checkout" element={<CheckoutPage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/contact" element={<ContactPage />} />

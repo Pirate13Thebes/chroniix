@@ -58,17 +58,17 @@ export function Hero() {
               backgroundImage: `url(${src})`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
-              opacity: i === bgIndex ? 0.35 : 0,
+              opacity: i === bgIndex ? 0.85 : 0,
               transition: 'opacity 1.2s ease-in-out',
             }}
           />
         ))}
-        {/* Smooth left-to-right fade overlay to ensure text on the left is highly legible */}
+        {/* Crisp background overlay balancing clear visuals with text legibility */}
         <div
           style={{
             position: 'absolute',
             inset: 0,
-            background: 'linear-gradient(to right, var(--bg-page) 35%, rgba(253, 251, 247, 0.7) 70%, rgba(253, 251, 247, 0.2) 100%)',
+            background: 'linear-gradient(to right, rgba(253, 251, 247, 0.88) 25%, rgba(253, 251, 247, 0.45) 65%, rgba(253, 251, 247, 0.15) 100%)',
             zIndex: 1
           }}
         />
