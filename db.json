@@ -20,7 +20,7 @@
           ],
           "leaveBalance": 14,
           "hourlyRateMUR": 0,
-          "credential": "Mr. Algorithm454500",
+          "credential": "Chrys2026",
           "status": "active",
           "terminatedAt": null,
           "terminationReason": null,
@@ -44,8 +44,33 @@
           ],
           "leaveBalance": 14,
           "hourlyRateMUR": 0,
-          "credential": "2040",
-          "mustChangePassword": true,
+          "credential": "Chrys2026",
+          "mustChangePassword": false,
+          "status": "active",
+          "terminatedAt": null,
+          "terminationReason": null,
+          "kioskPin": "3461"
+        },
+        {
+          "id": "emp-employee-2",
+          "firstName": "Elisee",
+          "lastName": "Employee",
+          "avatarUrl": "",
+          "email": "chrysoite77ci@gmail.com",
+          "phone": "",
+          "role": "employee",
+          "department": "",
+          "employmentType": "full_time",
+          "joinedAt": "2026-08-17",
+          "workLocationId": "loc-1",
+          "shiftId": null,
+          "allowedCheckInMethods": [
+            "gps_face"
+          ],
+          "leaveBalance": 14,
+          "hourlyRateMUR": 0,
+          "credential": "Chrys2026",
+          "mustChangePassword": false,
           "status": "active",
           "terminatedAt": null,
           "terminationReason": null,
@@ -59,7 +84,7 @@
       "settings": {
         "companyName": "SanteBlock",
         "logoUrl": "/chronix_logo.png",
-        "employeeCount": 1,
+        "employeeCount": 2,
         "shifts": [],
         "workLocations": [
           {
