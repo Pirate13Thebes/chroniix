@@ -30,14 +30,7 @@ interface SuperAdminBizInfo {
   joinedAt: string | null;
 }
 
-const PLAN_LABELS: Record<string, { label: string; price: string }> = {
-  starter: { label: 'Starter', price: 'MUR 1,500/mo' },
-  silver: { label: 'Silver', price: 'MUR 2,500/mo' },
-  gold: { label: 'Gold', price: 'MUR 4,000/mo' },
-  platinum: { label: 'Platinum', price: 'MUR 6,000/mo' },
-  platinum_plus: { label: 'Platinum Plus', price: 'MUR 8,500/mo' },
-  diamond: { label: 'Diamond', price: 'MUR 12,000/mo' },
-};
+
 
 export function SuperAdminPage() {
   const navigate = useNavigate();
