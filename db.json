@@ -1,0 +1,106 @@
+{
+  "businesses": {
+    "biz-demo-1": {
+      "employees": [
+        {
+          "id": "emp-admin-1",
+          "firstName": "Chrys",
+          "lastName": "Gnagne",
+          "avatarUrl": "",
+          "email": "c.gnagne@alustudent.com",
+          "phone": "054646462",
+          "role": "admin",
+          "department": "",
+          "employmentType": "full_time",
+          "joinedAt": "2026-08-17",
+          "workLocationId": "loc-1",
+          "shiftId": null,
+          "allowedCheckInMethods": [
+            "gps_face"
+          ],
+          "leaveBalance": 14,
+          "hourlyRateMUR": 0,
+          "credential": "Mr. Algorithm454500",
+          "status": "active",
+          "terminatedAt": null,
+          "terminationReason": null,
+          "kioskPin": "9999"
+        },
+        {
+          "id": "emp-employee-1",
+          "firstName": "Elisee",
+          "lastName": "Employee",
+          "avatarUrl": "",
+          "email": "chrysolite77cl@gmail.com",
+          "phone": "",
+          "role": "employee",
+          "department": "",
+          "employmentType": "full_time",
+          "joinedAt": "2026-08-17",
+          "workLocationId": "loc-1",
+          "shiftId": null,
+          "allowedCheckInMethods": [
+            "gps_face"
+          ],
+          "leaveBalance": 14,
+          "hourlyRateMUR": 0,
+          "credential": "2040",
+          "mustChangePassword": true,
+          "status": "active",
+          "terminatedAt": null,
+          "terminationReason": null,
+          "kioskPin": "3461"
+        }
+      ],
+      "attendance": [],
+      "requests": [],
+      "reimbursements": [],
+      "activity": [],
+      "settings": {
+        "companyName": "SanteBlock",
+        "logoUrl": "/chronix_logo.png",
+        "employeeCount": 1,
+        "shifts": [],
+        "workLocations": [
+          {
+            "id": "loc-1",
+            "name": "Main Office - Port louis",
+            "address": "Port louis",
+            "lat": -20.2,
+            "lng": 57.5,
+            "radiusMeters": 150
+          }
+        ],
+        "checkInMethods": [
+          "gps_face",
+          "qr",
+          "kiosk"
+        ],
+        "leaveTypes": [
+          "annual",
+          "sick",
+          "personal"
+        ],
+        "approvalFlow": [
+          "submitted",
+          "team_lead",
+          "manager",
+          "hr"
+        ],
+        "notificationChannels": [
+          "email",
+          "in_app"
+        ],
+        "departments": [],
+        "trialStartedAt": "2026-08-17T00:00:00.000Z",
+        "trialCancelled": false,
+        "billingCard": null,
+        "defaultReportRangeDays": 30,
+        "plan": null,
+        "billingStatus": "none",
+        "paymentMethod": null,
+        "paymentReference": null
+      }
+    }
+  }
+}
