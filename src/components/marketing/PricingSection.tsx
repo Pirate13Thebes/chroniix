@@ -123,7 +123,7 @@ export function PricingSection() {
             style={{
               display: 'flex',
               flexDirection: 'column',
-              justify: 'space-between',
+              justifyContent: 'space-between',
               position: 'relative',
               border: plan.popular ? '2px solid var(--chronix-amber)' : '1px solid var(--border)',
             }}

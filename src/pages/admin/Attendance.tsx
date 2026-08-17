@@ -9,7 +9,7 @@ import { AddEmployeeModal } from '../../components/admin/AddEmployeeModal';
 import { useStore, useStoreActions } from '../../hooks/useStore';
 import { useLanguage } from '../../hooks/useLanguage';
 import { formatHours, formatTime, localDateString } from '../../utils/format';
-import type { AttendanceRecord, Employee, TemporaryWorkerRecord } from '../../types';
+import type { AttendanceRecord, Employee } from '../../types';
 
 interface Row {
   record: AttendanceRecord;

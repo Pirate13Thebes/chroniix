@@ -2,17 +2,13 @@ import { useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Building2,
-  ShieldAlert,
   CheckCircle2,
   Lock,
   Unlock,
   Clock,
   Search,
-  Filter,
   RefreshCw,
   ArrowLeft,
-  Users,
-  CreditCard,
 } from 'lucide-react';
 import logo from '../../assets/chronix_logo.png';
 import type { PlanType } from '../../types';
@@ -255,7 +251,6 @@ export function SuperAdminPage() {
                 </thead>
                 <tbody>
                   {filteredBusinesses.map((biz) => {
-                    const planInfo = PLAN_LABELS[biz.plan || 'starter'] || PLAN_LABELS.starter;
                     return (
                       <tr key={biz.id} style={{ borderBottom: '1px solid var(--border)', background: biz.isLocked ? 'rgba(239, 68, 68, 0.03)' : 'transparent' }}>
                         <td style={{ padding: '1rem' }}>

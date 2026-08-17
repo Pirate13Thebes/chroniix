@@ -1,13 +1,10 @@
 import { useState, useEffect } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
-import { Clock, CheckCircle2, User, Phone, LogIn, LogOut, ArrowLeft, ShieldCheck } from 'lucide-react';
+import { CheckCircle2, User, Phone, LogIn, LogOut, ShieldCheck } from 'lucide-react';
 import { useStore, useStoreActions } from '../../hooks/useStore';
 import logo from '../../assets/chronix_logo.png';
 import type { TemporaryWorkerRecord } from '../../types';
 
 export function TempCheckInPage() {
-  const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
   const { state } = useStore();
   const { clockInTemp, clockOutTemp } = useStoreActions();
 

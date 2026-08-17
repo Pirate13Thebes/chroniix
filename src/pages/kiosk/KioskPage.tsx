@@ -2,7 +2,6 @@ import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, Lock, Check, Delete, ArrowRight, CheckCircle2, Clock, LogIn, LogOut, Edit2 } from 'lucide-react';
 import { useStore, useStoreActions } from '../../hooks/useStore';
-import { useLanguage } from '../../hooks/useLanguage';
 import { Avatar } from '../../components/common/Avatar';
 import logo from '../../assets/chronix_logo.png';
 import type { Employee } from '../../types';
@@ -10,7 +9,6 @@ import type { Employee } from '../../types';
 export function KioskPage() {
   const { state } = useStore();
   const { clockIn, clockOut } = useStoreActions();
-  const { t, lang } = useLanguage();
   const navigate = useNavigate();
 
   const companyName = state.settings?.companyName || 'CX';
