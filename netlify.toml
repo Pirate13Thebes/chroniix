@@ -5,7 +5,7 @@
 # 1. Forward all backend API requests to your hosted server
 [[redirects]]
   from = "/api/*"
-  to = "https://chronx.netlify.app/api/:splat"
+  to = "https://chroniix-production.up.railway.app/api/:splat"
   status = 200
   force = true
 
