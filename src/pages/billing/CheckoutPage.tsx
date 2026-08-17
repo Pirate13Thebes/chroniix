@@ -108,7 +108,7 @@ export function CheckoutPage() {
           </button>
           <button type="button" className="banano-toggle" onClick={toggleTheme}>
             <span>🍌</span>
-            {theme === 'banano' ? 'Standard Mode' : 'Banano Mode'}
+            {theme === 'banano' ? 'Switch to Standard' : 'Switch to Banano'}
           </button>
         </div>
 

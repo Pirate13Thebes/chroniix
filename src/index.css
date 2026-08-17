@@ -51,6 +51,18 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   min-height: 100vh;
+  transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+/* Smooth transition for theme switching on major components */
+.sidebar,
+.card,
+.topbar,
+.btn,
+.form-input,
+.modal-panel,
+.page-header {
+  transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease, background 0.4s ease, box-shadow 0.4s ease;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -992,7 +1004,7 @@ button, input, textarea, select {
   justify-content: center;
   z-index: 1100;
   padding: 1rem;
-  animation: modalBackdropIn 0.18s ease-out;
+  animation: modalBackdropIn 0.18s ease-out both;
 }
 .modal-panel {
   background: var(--bg-card);
@@ -1003,7 +1015,7 @@ button, input, textarea, select {
   max-height: 90vh;
   overflow-y: auto;
   box-shadow: var(--card-shadow-hover);
-  animation: modalPanelIn 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: modalPanelIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 @keyframes modalBackdropIn {
   from { opacity: 0; }

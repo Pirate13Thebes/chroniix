@@ -102,7 +102,7 @@ export function Sidebar({ variant, mobileOpen, onCloseMobile }: SidebarProps) {
           )}
           <button className="nav-item" onClick={toggleTheme} style={{ color: theme === 'banano' ? 'var(--chronix-amber)' : 'inherit' }}>
             <span style={{ fontSize: '16px', display: 'flex', alignItems: 'center', width: '18px', marginRight: '6px' }}>🍌</span>
-            {theme === 'banano' ? 'Banano Mode' : 'Switch to Banano'}
+            {theme === 'banano' ? 'Switch to Standard' : 'Switch to Banano'}
           </button>
           <button className="nav-item" onClick={logout}>
             <LogOut size={18} />
