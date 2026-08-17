@@ -64,11 +64,11 @@
         "workLocations": [
           {
             "id": "loc-1",
-            "name": "Main Office - Port louis",
-            "address": "Port louis",
-            "lat": -20.2,
-            "lng": 57.5,
-            "radiusMeters": 150
+            "name": "Main Office - Beau Plan",
+            "address": "Beau Plan",
+            "lat": -20.1017,
+            "lng": 57.5746,
+            "radiusMeters": 50000
           }
         ],
         "checkInMethods": [
