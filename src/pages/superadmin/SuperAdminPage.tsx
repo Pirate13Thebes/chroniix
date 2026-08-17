@@ -259,7 +259,7 @@ export function SuperAdminPage() {
             >
               Locked
             </button>
-            <button type="button" className="btn btn-outline" onClick={fetchBusinesses} title="Refresh">
+            <button type="button" className="btn btn-outline" onClick={() => saKey && fetchBusinesses(saKey)} title="Refresh">
               <RefreshCw size={16} />
             </button>
           </div>
