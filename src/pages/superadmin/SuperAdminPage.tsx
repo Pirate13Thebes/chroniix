@@ -39,14 +39,29 @@ export function SuperAdminPage() {
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState<'all' | 'trialing' | 'locked' | 'confirmed'>('all');
   const [actionMessage, setActionMessage] = useState<string | null>(null);
+  const [saKey, setSaKey] = useState<string | null>(() => {
+    if (typeof window !== 'undefined') {
+      return window.sessionStorage.getItem('chronix_sa_key');
+    }
+    return null;
+  });
+  const [authError, setAuthError] = useState(false);
 
-  const fetchBusinesses = async () => {
+  const fetchBusinesses = async (key: string) => {
     setLoading(true);
     try {
-      const res = await fetch('/api/super-admin/businesses');
+      const res = await fetch('/api/super-admin/businesses', {
+        headers: { 'x-super-admin-key': key },
+      });
+      if (res.status === 403) {
+        setAuthError(true);
+        setLoading(false);
+        return;
+      }
       if (res.ok) {
         const data = await res.json();
         setBusinesses(data);
+        setAuthError(false);
       }
     } catch (err) {
       console.error('Failed to fetch businesses for Super Admin:', err);
@@ -56,23 +71,35 @@ export function SuperAdminPage() {
   };
 
   useEffect(() => {
-    fetchBusinesses();
-  }, []);
+    if (!saKey) {
+      const entered = window.prompt('Enter the Super Admin Access Key:');
+      if (!entered) {
+        navigate('/');
+        return;
+      }
+      window.sessionStorage.setItem('chronix_sa_key', entered);
+      setSaKey(entered);
+      fetchBusinesses(entered);
+    } else {
+      fetchBusinesses(saKey);
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleUpdateStatus = async (
     businessId: string,
     updates: Partial<{ isLocked: boolean; trialCancelled: boolean; plan: PlanType; billingStatus: string }>
   ) => {
+    if (!saKey) return;
     try {
       const res = await fetch(`/api/super-admin/business/${businessId}/status`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'x-super-admin-key': saKey },
         body: JSON.stringify(updates),
       });
       if (res.ok) {
         setActionMessage('Company status updated successfully!');
         setTimeout(() => setActionMessage(null), 3000);
-        fetchBusinesses();
+        fetchBusinesses(saKey);
       }
     } catch (err) {
       console.error('Failed to update company status:', err);
@@ -104,6 +131,21 @@ export function SuperAdminPage() {
       awaiting: businesses.filter((b) => b.billingStatus === 'awaiting_confirmation').length,
     };
   }, [businesses]);
+
+  if (authError) {
+    return (
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-page)' }}>
+        <div className="card" style={{ maxWidth: 420, textAlign: 'center', padding: '2.5rem' }}>
+          <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🔒</div>
+          <h2 style={{ fontSize: '1.4rem', fontWeight: 800, marginBottom: '0.5rem', color: 'var(--danger)' }}>Access Denied</h2>
+          <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>Invalid Super Admin key. You are not authorized to view this page.</p>
+          <button className="btn btn-primary-navy" onClick={() => { window.sessionStorage.removeItem('chronix_sa_key'); setSaKey(null); setAuthError(false); navigate('/'); }}>
+            Go Back
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg-page)', padding: '2rem 5%' }}>

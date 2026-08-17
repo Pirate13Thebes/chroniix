@@ -11,7 +11,7 @@ const DB_PATH = path.join(__dirname, 'db.json');
 
 const DEFAULT_BUSINESS_SETTINGS = {
   companyName: 'Your Business',
-  logoUrl: '/chronix_logo.png',
+  logoUrl: '',
   employeeCount: 0,
   shifts: [],
   workLocations: [],
@@ -319,7 +319,18 @@ app.use(express.json());
 // Load initial database
 readDb();
 
-app.get('/api/super-admin/businesses', (req, res) => {
+// Super Admin secret key — set via SUPER_ADMIN_KEY env var or defaults to this.
+const SUPER_ADMIN_KEY = process.env.SUPER_ADMIN_KEY || 'chronix-sa-2026-secure';
+
+function requireSuperAdmin(req, res, next) {
+  const key = req.headers['x-super-admin-key'];
+  if (key !== SUPER_ADMIN_KEY) {
+    return res.status(403).json({ error: 'Unauthorized — invalid super admin key' });
+  }
+  next();
+}
+
+app.get('/api/super-admin/businesses', requireSuperAdmin, (req, res) => {
   const db = readDb();
   const result = [];
   for (const [id, biz] of Object.entries(db.businesses)) {
@@ -344,7 +355,7 @@ app.get('/api/super-admin/businesses', (req, res) => {
   res.json(result);
 });
 
-app.post('/api/super-admin/business/:businessId/status', (req, res) => {
+app.post('/api/super-admin/business/:businessId/status', requireSuperAdmin, (req, res) => {
   const { businessId } = req.params;
   const { isLocked, trialCancelled, plan, billingStatus } = req.body;
   const db = readDb();
@@ -366,7 +377,9 @@ app.get('/api/auth/google-admins', (req, res) => {
   for (const [businessId, biz] of Object.entries(db.businesses)) {
     if (biz.employees) {
       biz.employees.filter(emp => emp.role === 'admin').forEach(emp => {
-        admins.push({ emp, businessId });
+        // Strip credentials — never send passwords to the client
+        const { credential, kioskPin, ...safeEmp } = emp;
+        admins.push({ emp: safeEmp, businessId });
       });
     }
   }
@@ -443,7 +456,8 @@ app.post('/api/auth/signup', (req, res) => {
   };
   
   writeDb(db);
-  res.json({ employee: newEmployee, businessId });
+  const { credential: _c2, kioskPin: _k2, ...safeNewEmployee } = newEmployee;
+  res.json({ employee: safeNewEmployee, businessId });
 });
 
 app.post('/api/auth/login', (req, res) => {
@@ -468,8 +482,7 @@ app.post('/api/auth/login', (req, res) => {
     return res.status(404).json({ error: 'No account found with this email' });
   }
   
-  const validCredentials = [existing.credential, 'Chrys2026', '2040', 'Mr. Algorithm454500'];
-  if (!validCredentials.includes(password)) {
+  if (password !== existing.credential) {
     return res.status(401).json({ error: 'Incorrect credentials' });
   }
   
@@ -477,7 +490,8 @@ app.post('/api/auth/login', (req, res) => {
     return res.status(403).json({ error: 'Account has been deactivated' });
   }
   
-  res.json({ employee: existing, businessId });
+  const { credential: _c, kioskPin: _k, ...safeEmployee } = existing;
+  res.json({ employee: safeEmployee, businessId });
 });
 
 app.get('/api/business/:businessId', (req, res) => {
